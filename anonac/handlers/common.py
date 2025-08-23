@@ -61,6 +61,7 @@ def register_handlers(user_controller: UserController) -> Router:
     
         except Exception as e:
             logger.error(f"Ошибка при обработке команды /stop. USER({user.id}): {e}")
+
     @router.message(Command("stop"))
     async def cmd_stop(message: types.Message):         
         try:
@@ -79,7 +80,9 @@ def register_handlers(user_controller: UserController) -> Router:
     
         except Exception as e:
             logger.error(f"Ошибка при обработке команды /stop. USER({user.id}): {e}")@router.message(Command("stop"))
-    async def cmd_stop(message: types.Message):         
+    
+    @router.message(Command("next"))
+    async def cmd_next(message: types.Message):         
         try:
             user = message.from_user
 
