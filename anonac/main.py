@@ -2,7 +2,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from anonac.config import settings
 from anonac.database.controller import Database, UserController
-from handlers import commands
+from handlers import commands, chat
 from anonac.services.matchmaking import signal_controller
 
 async def main():
@@ -15,6 +15,7 @@ async def main():
     dp = Dispatcher()
     
     dp.include_router(commands.register_handlers(user_controller))
+    dp.include_router(chat.register_chat_handlers(user_controller))
 
     try:
         await asyncio.gather(
