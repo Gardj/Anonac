@@ -2,7 +2,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from anonac.config import settings
 from anonac.database.controller import Database, UserController
-from anonac.handlers import common
+from handlers import commands
 from anonac.services.matchmaking import signal_controller
 
 async def main():
@@ -14,7 +14,7 @@ async def main():
     bot = Bot(token=settings.bot_token)
     dp = Dispatcher()
     
-    dp.include_router(common.register_handlers(user_controller))
+    dp.include_router(commands.register_handlers(user_controller))
 
     try:
         await asyncio.gather(
