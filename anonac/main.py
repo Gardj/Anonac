@@ -2,7 +2,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from anonac.config import settings
 from anonac.database.controller import Database, UserController
-from handlers import common
+from anonac.handlers import common
 from anonac.services.matchmaking import signal_controller
 
 async def main():

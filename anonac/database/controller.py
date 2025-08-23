@@ -51,18 +51,19 @@ class UserController:
             logger.error(f"Ошибка при регистрации пользователя с ID {telegram_id}: {e}")
             return False
 
-    async def get_user_id(self, telegram_id: int) -> Optional[asyncpg.Record]:
+    async def get_user_id(self, id: int) -> Optional[asyncpg.Record]:
         try:
             async with self.db.pool.acquire() as conn:
                 user = await conn.fetchrow(
                     "SELECT * FROM anonac.userdata WHERE id = $1",
-                    telegram_id
+                    id
                 )
                 return user
         except Exception as e:
             logger.error(f"Ошибка при получении пользователя с ID {telegram_id}: {e}")
             return None
-    async def get_status(self, telegram_id: int) -> Optional[str]:
+        
+    async def get_status(self, id: int) -> Optional[str]:
         """
         Возвращает статус пользователя по его telegram_id.
         """
@@ -70,15 +71,15 @@ class UserController:
             async with self.db.pool.acquire() as conn:
                 row = await conn.fetchrow(
                     "SELECT status FROM anonac.userdata WHERE id = $1",
-                    telegram_id
+                    id
                 )
                 if row:
                     return row["status"]
                 else:
-                    logger.info(f"Пользователь с ID {telegram_id} не найден.")
+                    logger.info(f"Пользователь с ID {id} не найден.")
                     return None
         except Exception as e:
-            logger.error(f"Ошибка при получении статуса пользователя с ID {telegram_id}: {e}")
+            logger.error(f"Ошибка при получении статуса пользователя с ID {id}: {e}")
             return None
         
     async def get_status_list(self, status: str) -> List[asyncpg.Record]:
@@ -93,16 +94,16 @@ class UserController:
             logger.error(f"Ошибка при получении пользователей со статусом {status}: {e}")
             return []
         
-    async def get_signal(self, user_id: int) -> Optional[asyncpg.Record]:
+    async def get_signal(self, id: int) -> Optional[asyncpg.Record]:
         try:
             async with self.db.pool.acquire() as conn:
                 # Получаем signal_id для пользователя
                 row = await conn.fetchrow(
                     "SELECT signal_id FROM anonac.userdata WHERE id = $1",
-                    user_id
+                    id
                 )
                 if not row or not row["signal_id"]:
-                    logger.info(f"У пользователя {user_id} нет активного сигнала.")
+                    logger.info(f"У пользователя {id} нет активного сигнала.")
                     return None
 
                 signal_id = row["signal_id"]

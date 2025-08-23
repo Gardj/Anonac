@@ -61,5 +61,47 @@ def register_handlers(user_controller: UserController) -> Router:
     
         except Exception as e:
             logger.error(f"Ошибка при обработке команды /stop. USER({user.id}): {e}")
+    @router.message(Command("stop"))
+    async def cmd_stop(message: types.Message):         
+        try:
+            user = message.from_user
+
+            if await user_controller.get_status(user.id) == "active":
+                signal = await user_controller.get_signal(user.id)
+
+                await user_controller.set_status([user.id, signal["id"]], "unactive")
+                await user_controller.set_signal([user.id, signal["id"]], None)
+
+                await message.answer(anonac.messages.STOP_USER)
+                await message.bot.send_message(signal["id"], anonac.messages.STOP_SIGNAL) 
+            else:
+                await message.answer(anonac.messages.STOP_ERROR)
     
+        except Exception as e:
+            logger.error(f"Ошибка при обработке команды /stop. USER({user.id}): {e}")@router.message(Command("stop"))
+    async def cmd_stop(message: types.Message):         
+        try:
+            user = message.from_user
+
+            current_user_status = await user_controller.get_status(user.id)
+
+            if current_user_status == "active":
+                signal = await user_controller.get_signal(user.id)
+
+                await user_controller.set_status(user.id, "search")
+                await user_controller.set_status(signal["id"], "unactive")
+                await user_controller.set_signal([user.id, signal["id"]], None)
+
+                await message.answer(anonac.messages.SEARCH)
+                await message.bot.send_message(signal["id"], anonac.messages.STOP_SIGNAL)
+
+            elif current_user_status == "unactive":
+                await user_controller.set_status(user.id, "search")
+                await message.answer(anonac.messages.SEARCH)
+            else:
+                await message.answer(anonac.messages.STOP_ERROR)
+    
+        except Exception as e:
+            logger.error(f"Ошибка при обработке команды /next. USER({user.id}): {e}")
+
     return router    
